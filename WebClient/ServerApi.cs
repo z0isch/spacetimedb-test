@@ -29,8 +29,8 @@ public class ServerApi
 		_timer = new Timer(_ => { ProcessThread(DbConnection); }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
 	}
 
-	private const string HOST = "http://localhost:3000";
-	private const string DBNAME = "quickstart-chat";
+	private const string HOST = "https://maincloud.spacetimedb.com";
+	private const string DBNAME = "z0-quickstart-chat";
 
 	private DbConnection ConnectToDB()
 	{
