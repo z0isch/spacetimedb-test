@@ -1,0 +1,44 @@
+﻿@page "/counter"
+@using SpacetimeDB
+@using SpacetimeDB.Types
+
+<PageTitle>Web Chat</PageTitle>
+
+<h1>Web Chat</h1>
+<h2>@ServerApi.DbConnection.Identity</h2>
+<ul>
+    @foreach (var playerState in PlayerStates)
+    {
+        <li>
+            <span>@playerState.Key</span>
+            @if (playerState.Key == ServerApi.DbConnection.Identity)
+            {
+                <input @bind="@CurrentTyping" @bind:event="oninput" @bind:after="@HandleKeyDown" />
+            }
+            else
+            {
+                <input @bind="@playerState.Value.Typing" disabled />
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Inject] public ServerApi ServerApi { get; set; } = null!;
+
+    public Dictionary<Identity, PlayerState> PlayerStates => ServerApi.PlayerStates;
+
+    private string CurrentTyping { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ServerApi.Run(() => StateHasChanged());
+    }
+
+    private void HandleKeyDown()
+    {
+        ServerApi.SetTyping(CurrentTyping);
+    }
+
+}
