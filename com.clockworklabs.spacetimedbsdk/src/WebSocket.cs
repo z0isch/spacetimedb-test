@@ -58,18 +58,15 @@ namespace SpacetimeDB
             {
                 uri += "&light=true";
             }
+            if (auth != null)
+            {
+                uri += $"&token={Uri.EscapeDataString(auth)}";
+            }
+
             var url = new Uri(uri);
             Ws.Options.AddSubProtocol(_options.Protocol);
 
             var source = new CancellationTokenSource(10000);
-            if (!string.IsNullOrEmpty(auth))
-            {
-                Ws.Options.SetRequestHeader("Authorization", $"Bearer {auth}");
-            }
-            else
-            {
-                //Ws.Options.UseDefaultCredentials = true;
-            }
 
             try
             {

@@ -3,9 +3,7 @@ using SpacetimeDB;
 using SpacetimeDB.Types;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Diagnostics.Contracts;
 
 namespace WebClient;
 
@@ -18,54 +16,47 @@ public class ServerApi
 	private Timer? _timer;
 	private Action? _stateHasChanged;
 	public Dictionary<Identity, PlayerState> PlayerStates = new();
-	public DbConnection DbConnection { get; private set; }
+	public DbConnection? DbConnection { get; private set; }
 
-	public void Run(Action stateHasChanged)
+	public void Run(string? authToken, Action<string> setAuthToken, Action stateHasChanged)
 	{
 		_stateHasChanged = stateHasChanged;
-		AuthToken.Init(".spacetime_csharp_quickstart");
-		DbConnection = ConnectToDB();
+		DbConnection = ConnectToDB(authToken, setAuthToken);
 		RegisterCallbacks(DbConnection);
-		_timer = new Timer(_ => { ProcessThread(DbConnection); }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
+		_timer = new Timer(_ => { ProcessThread(DbConnection); }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(8));
 	}
 
-	private const string HOST = "https://maincloud.spacetimedb.com";
-	private const string DBNAME = "z0-quickstart-chat";
+	private const string HOST = "http://localhost:3000";
+	private const string DBNAME = "quickstart-chat";
 
-	private DbConnection ConnectToDB()
+	private DbConnection ConnectToDB(string? authToken, Action<string> setAuthToken)
 	{
 		var conn = DbConnection.Builder()
 							   .WithCompression(Compression.Gzip)
 							   .WithUri(HOST)
 							   .WithModuleName(DBNAME)
-							   .WithToken(AuthToken.Token)
-							   .OnConnect(OnConnected)
-							   .OnConnectError(OnConnectError)
-							   .OnDisconnect(OnDisconnected)
+							   .WithToken(authToken)
+							   .OnConnect((conn, identity, authToken) =>
+							   {
+								   setAuthToken(authToken);
+								   local_identity = identity;
+
+								   conn.SubscriptionBuilder()
+									   .OnApplied(OnSubscriptionApplied)
+									   .SubscribeToAllTables();
+							   })
+							   .OnConnectError((Exception e) =>
+							   {
+								   Console.WriteLine($"Error while connecting: {e}");
+							   })
+							   .OnDisconnect((conn, e) =>
+							   {
+								   Console.WriteLine(e != null
+								   ? $"Disconnected abnormally: {e}"
+								   : "Disconnected normally.");
+							   })
 							   .Build();
 		return conn;
-	}
-
-	private void OnConnected(DbConnection conn, Identity identity, string authToken)
-	{
-		local_identity = identity;
-		AuthToken.SaveToken(authToken);
-
-		conn.SubscriptionBuilder()
-			.OnApplied(OnSubscriptionApplied)
-			.SubscribeToAllTables();
-	}
-
-	private void OnConnectError(Exception e)
-	{
-		Console.WriteLine($"Error while connecting: {e}");
-	}
-
-	private void OnDisconnected(DbConnection conn, Exception? e)
-	{
-		Console.WriteLine(e != null
-							 ? $"Disconnected abnormally: {e}"
-							 : "Disconnected normally.");
 	}
 
 	private void RegisterCallbacks(DbConnection conn)

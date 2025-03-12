@@ -1,39 +1,49 @@
 ﻿@page "/counter"
 @using SpacetimeDB
 @using SpacetimeDB.Types
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject ServerApi ServerApi
 
 <PageTitle>Web Chat</PageTitle>
 
 <h1>Web Chat</h1>
-<h2>@ServerApi.DbConnection.Identity</h2>
-<ul>
-    @foreach (var playerState in PlayerStates)
-    {
-        <li>
-            <span>@playerState.Key</span>
-            @if (playerState.Key == ServerApi.DbConnection.Identity)
-            {
-                <input @bind="@CurrentTyping" @bind:event="oninput" @bind:after="@HandleKeyDown" />
-            }
-            else
-            {
-                <input @bind="@playerState.Value.Typing" disabled />
-            }
-        </li>
-    }
-</ul>
+@if (ServerApi.DbConnection?.IsActive ?? false)
+{
+    <h2>@ServerApi.DbConnection.Identity</h2>
+    <ul>
+        @foreach (var playerState in PlayerStates)
+        {
+            <li>
+                @if (playerState.Key == ServerApi.DbConnection.Identity)
+                {
+                    <input @bind="@CurrentTyping" @bind:event="oninput" @bind:after="@HandleKeyDown" />
+                }
+                else
+                {
+                    <input @bind="@playerState.Value.Typing" disabled />
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h2>Loading...</h2>
+}
 
 @code {
-    [Inject] public ServerApi ServerApi { get; set; } = null!;
-
     public Dictionary<Identity, PlayerState> PlayerStates => ServerApi.PlayerStates;
-
     private string CurrentTyping { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
+        var tokenFromLocalStorage = await JS.InvokeAsync<string?>("localStorage.getItem", "token");
+        ServerApi.Run(tokenFromLocalStorage, (token) =>
+        {
+            var _t = JS.InvokeVoidAsync("localStorage.setItem", "token", token);
+        }, () => StateHasChanged());
         await base.OnInitializedAsync();
-        ServerApi.Run(() => StateHasChanged());
     }
 
     private void HandleKeyDown()
