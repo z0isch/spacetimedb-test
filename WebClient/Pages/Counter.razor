@@ -6,10 +6,12 @@
 @inject ServerApi ServerApi
 @inject StaticAssetService StaticAssetService
 @inject HttpClient Http
+@inject EventService EventService
 
 <PageTitle>Web Chat</PageTitle>
 
 <h1>Web Chat</h1>
+<button @onclick="() => EventService.EnqueueEvent(new MyTurn())">My Turn</button>
 @if (StaticAssets != null)
 {
     <p>@StaticAssets.Value.Words[0]</p>
@@ -53,6 +55,7 @@ else
             var _t = JS.InvokeVoidAsync("localStorage.setItem", "token", token);
         }, () => StateHasChanged());
         StaticAssets = await StaticAssetService.GetStaticAssets(Http);
+        EventService.Initialize(JS);
         await base.OnInitializedAsync();
     }
 
