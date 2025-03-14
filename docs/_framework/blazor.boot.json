@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "WebClient",
   "resources": {
-    "hash": "sha256-B0dmtu/XeSoSR34DWUSaxz0kvb0NgO3CBaJXjarar+g=",
+    "hash": "sha256-Hq4lJkWWWT1HdNsY9sDBoUDLO7ZNT6VB/MYNpWPkTDY=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-xNQsYHtL1vcbrVTHDZAwJM4WovpoyjsrM2C6FQ8cW1w="
     },
@@ -34,7 +34,7 @@
       "Microsoft.JSInterop.WebAssembly.wasm": "sha256-RhVAz265IFi9sK3YF5C+qnevStoIPeRZ8rOqY/P0wc4=",
       "netstandard.wasm": "sha256-aQonzv3pMNmWpbLusflAhWhKwhp2Pnr+s2hxbW4mPu8=",
       "SpacetimeDB.BSATN.Runtime.wasm": "sha256-o4gogRgseTt0oAYKa0EfG+fNeSlgwlEC/OgLeENj5g0=",
-      "SpacetimeDB.ClientSDK.wasm": "sha256-1Ji90T9jUVQmym2ehPY8i8G1T3T3CaFk1YvmkOl6GY4=",
+      "SpacetimeDB.ClientSDK.wasm": "sha256-lPcWM91ncawYqZBu5hF2T/4BtUNLYuyMWZSX9rb/6Mw=",
       "System.Collections.Concurrent.wasm": "sha256-DGu/DAA3hw++Mi6m8RO19zpzJBkd4+NatoaekyBTmIk=",
       "System.Collections.wasm": "sha256-DtABzn/DEADs811O9vMDp2rNK2EaltcZXvDqnnyrZFY=",
       "System.ComponentModel.wasm": "sha256-T0OM75VQcELFeKofeuo3QISKtC4NO3w/cdk2oAxfpQk=",
@@ -58,7 +58,7 @@
       "System.Text.Json.wasm": "sha256-XGCJYdfAXJIER2kADQY2M8W3f2gKDT/u4SJBpWo49bg=",
       "System.Text.RegularExpressions.wasm": "sha256-nsPWW6LIGQF7+Dm7/hbRPceB4MHdZnBLhoa98BacDZ4=",
       "System.Threading.wasm": "sha256-q+4HoHX278CEy0Plr9F5fjvdDRBO/SGv/7Fqz/D586U=",
-      "WebClient.wasm": "sha256-UzvQWt9Dps9L6t54xHintS68WxFVQi8TjzvaWFpiGjo="
+      "WebClient.wasm": "sha256-y3aoVy8EyhJrsodbY+MQzG3VRs9JK3XGYEi2+5pV5N8="
     }
   },
   "cacheBootResources": true,
