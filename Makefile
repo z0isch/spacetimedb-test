@@ -1,7 +1,7 @@
 .PHONY: publish-web
 publish-web:
 	dotnet publish ./WebClient/WebClient.csproj --configuration Release
-	rsync -av --delete ./WebClient/bin/Release/net8.0/publish/ ./docs/
+	rsync -av --delete ./WebClient/bin/Release/net8.0/publish/wwwroot/ ./docs/
 
 .PHONY: generate-bindings
 generate-bindings:
