@@ -2,19 +2,18 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using System.Linq;
 
 public abstract class Event
 {
     public async Task Dispatch(IJSRuntime js)
     {
-        await js.InvokeVoidAsync("dispatchEvent",
-            await js.InvokeAsync<IJSObjectReference>("eval", "new CustomEvent('" + GetType().Name + "')"));
+        await js.InvokeVoidAsync("document.body.dispatchEvent",
+            await js.InvokeAsync<IJSObjectReference>("eval", $"new CustomEvent('{GetType().Name}', {{ bubbles: true }})"));
     }
 }
 
-public class MyTurn : Event
-{
-}
+public class MyTurn : Event { }
 
 class EventService
 {

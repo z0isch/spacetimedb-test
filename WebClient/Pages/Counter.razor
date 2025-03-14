@@ -11,7 +11,10 @@
 <PageTitle>Web Chat</PageTitle>
 
 <h1>Web Chat</h1>
-<button @onclick="() => EventService.EnqueueEvent(new MyTurn())">My Turn</button>
+<button @onclick="() => EventService.EnqueueEvent(new MyTurn())"
+    _="on MyTurn from elsewhere add .grow wait for animationend then remove .grow">My
+    Turn
+</button>
 @if (StaticAssets != null)
 {
     <p>@StaticAssets.Value.Words[0]</p>
@@ -57,6 +60,11 @@ else
         StaticAssets = await StaticAssetService.GetStaticAssets(Http);
         EventService.Initialize(JS);
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("eval", "_hyperscript.processNode(document)");
     }
 
     private void HandleKeyDown()
