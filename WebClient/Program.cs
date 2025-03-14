@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -16,7 +17,9 @@ public class Program
 		builder.RootComponents.Add<HeadOutlet>("head::after");
 
 		builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-		builder.Services.AddSingleton(new ServerApi());
+		builder.Services.AddSingleton<ServerApi>();
+		_ = Task.Run(() => StaticAssetService.GetStaticAssets(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) }));
+		builder.Services.AddSingleton<StaticAssetService>();
 
 		await builder.Build().RunAsync();
 	}

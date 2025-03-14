@@ -4,10 +4,18 @@
 @using Microsoft.JSInterop
 @inject IJSRuntime JS
 @inject ServerApi ServerApi
+@inject StaticAssetService StaticAssetService
+@inject HttpClient Http
 
 <PageTitle>Web Chat</PageTitle>
 
 <h1>Web Chat</h1>
+@if (StaticAssets != null)
+{
+    <p>@StaticAssets.Value.Words[0]</p>
+    <p>@StaticAssets.Value.SubstringsOrderedByFrequency[0].Substring -
+        @StaticAssets.Value.SubstringsOrderedByFrequency[0].Frequency</p>
+}
 @if (ServerApi.DbConnection?.IsActive ?? false)
 {
     <h2>@ServerApi.DbConnection.Identity</h2>
@@ -34,6 +42,7 @@ else
 
 @code {
     public Dictionary<Identity, PlayerState> PlayerStates => ServerApi.PlayerStates;
+    public StaticAssets? StaticAssets { get; set; }
     private string CurrentTyping { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
@@ -43,6 +52,7 @@ else
         {
             var _t = JS.InvokeVoidAsync("localStorage.setItem", "token", token);
         }, () => StateHasChanged());
+        StaticAssets = await StaticAssetService.GetStaticAssets(Http);
         await base.OnInitializedAsync();
     }
 
